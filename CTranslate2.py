@@ -34,6 +34,10 @@ def read_file(f, is_prefix=False, source_and_prefix=False):
             w.append(src_pre[1].split())
             if len(w[-1]) == 0: #empty prefix
                 w[-1] = None
+            print(v[-1])
+            print(w[-1])
+
+        sys.exit()
         return v,w
     
     v = [l.rstrip('\n').split() for l in open(f)]
