@@ -34,10 +34,9 @@ def read_file(f, is_prefix=False, source_and_prefix=False):
             w.append(src_pre[1].split())
             if len(w[-1]) == 0: #empty prefix
                 w[-1] = None
-            print(v[-1])
-            print(w[-1])
+            print('v',v[-1])
+            print('w',w[-1])
 
-        sys.exit()
         return v,w
     
     v = [l.rstrip('\n').split() for l in open(f)]
@@ -190,7 +189,7 @@ if __name__ == "__main__":
         return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, min_decoding_length=args.min_decoding_length)
     
     batch_size = len(source) // args.inter_threads
-    logging.info('Start')
+    logging.info('Start batch_size={}'.format(batch_size))
     tic = time()
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.inter_threads) as executor:
         future_to_trans = [executor.submit(translate, translator, source[i: i + batch_size], prefix[i: i + batch_size], args) for i in range(0, len(source), batch_size)]
