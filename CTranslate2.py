@@ -34,8 +34,6 @@ def read_file(f, is_prefix=False, source_and_prefix=False):
             w.append(src_pre[1].split())
             if len(w[-1]) == 0: #empty prefix
                 w[-1] = None
-            print('v',v[-1])
-            print('w',w[-1])
 
         return v,w
     
