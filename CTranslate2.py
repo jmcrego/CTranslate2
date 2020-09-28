@@ -200,7 +200,7 @@ if __name__ == "__main__":
             logging.info('(translated batch {} with {} examples)'.format(b,len(batch)))
             for line in batch:
                 print('MySRC[{}]: {}'.format(n,' '.join(source[n])))
-                if len(prefix[n]):
+                if prefix[n] is not None:
                     print('MyPRF[{}]: {}'.format(n,' '.join(prefix[n])))
                 print('MyOUT[{}]: {}'.format(n,' '.join(line[0]['tokens'])))
                 if len(line):
