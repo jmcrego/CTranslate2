@@ -193,20 +193,23 @@ if __name__ == "__main__":
         future_to_trans = [executor.submit(translate, translator, source[i: i + batch_size], prefix[i: i + batch_size], args) for i in range(0, len(source), batch_size)]
         logging.info('({} batchs submitted)'.format(len(future_to_trans)))
         b = 0
+        n = 0
         for future in future_to_trans:
             batch = future.result()
             b += 1
             logging.info('(translated batch {} with {} examples)'.format(b,len(batch)))
             for line in batch:
+                print('MySRC[{}]: {}'.format(n,source[n]))
+                print('MyPRF[{}]: {}'.format(n,prefix[n]))
+                print('MyOUT[{}]: {}'.format(n,line))
                 if len(line):
                     hyp = " ".join(line[0]["tokens"])
                     #hyp = hyp.split(' '+args.tok_prefix+' ')[-1]
-                    print('MyHYP: {}'.format(hyp))
                     hyp = hyp.split(args.tok_prefix+' ')[-1]
                 else:
-                    print('MyHYP: ')
                     hyp = ""
                 print(hyp)
+                n += 1
 
     toc = time()
     logging.info("End ({:.2f} seconds [{:.2f} sents/sec])".format(toc-tic, 1.0*len(source)/(toc-tic)))
