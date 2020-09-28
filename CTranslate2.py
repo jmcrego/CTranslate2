@@ -186,7 +186,7 @@ if __name__ == "__main__":
     def translate(translator, src, pref, args):
         return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, min_decoding_length=args.min_decoding_length)
     
-    batch_size = 1 #len(source) // args.inter_threads
+    batch_size = len(source) // args.inter_threads
     logging.info('Start batch_size={}'.format(batch_size))
     tic = time()
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.inter_threads) as executor:
