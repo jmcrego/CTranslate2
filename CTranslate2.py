@@ -201,7 +201,7 @@ if __name__ == "__main__":
             for line in batch:
                 print('MySRC[{}]: {}'.format(n,source[n]))
                 print('MyPRF[{}]: {}'.format(n,prefix[n]))
-                print('MyOUT[{}]: {}'.format(n,line))
+                print('MyOUT[{}]: {}'.format(n,line[0]['tokens']))
                 if len(line):
                     hyp = " ".join(line[0]["tokens"])
                     #hyp = hyp.split(' '+args.tok_prefix+' ')[-1]
