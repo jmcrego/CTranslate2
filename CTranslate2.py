@@ -201,9 +201,10 @@ if __name__ == "__main__":
                 if len(line):
                     hyp = " ".join(line[0]["tokens"])
                     #hyp = hyp.split(' '+args.tok_prefix+' ')[-1]
-                    print('HYP: {}'.format(hyp))
+                    print('MyHYP: {}'.format(hyp))
                     hyp = hyp.split(args.tok_prefix+' ')[-1]
                 else:
+                    print('MyHYP: ')
                     hyp = ""
                 print(hyp)
 
