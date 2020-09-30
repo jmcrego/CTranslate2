@@ -56,7 +56,7 @@ class Args():
         self.fprefix = None
         self.fsrcpref = None
         self.fmodel = None
-        self.tok_prefix = '‖'
+        self.tok_prefix = '⸨cur⸩'
         self.device = 'cpu'
         self.inter_threads = 16
         self.intra_threads = 1
@@ -206,7 +206,7 @@ if __name__ == "__main__":
                 if len(line):
                     hyp = " ".join(line[0]["tokens"])
                     #hyp = hyp.split(' '+args.tok_prefix+' ')[-1]
-                    hyp = hyp.split(args.tok_prefix+' ')[-1]
+                    hyp = hyp.split(' '+args.tok_prefix+' ')[-1]
                 else:
                     hyp = ""
                 print(hyp)
