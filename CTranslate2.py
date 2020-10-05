@@ -74,15 +74,15 @@ class Args():
     -p  FILE : prefix file (prefix lines must be ended by tok_prefix)
     -sp FILE : source and prefix file (lines include source and prefix separateds by tab)
 
-    -tok_prefix          STR : token used to mark end of prefix (default ‖)
+    -tok_prefix       STRING : token used to mark end of prefix (default ‖)
     -inter_threads       INT : inter threads (default 16)
     -intra_threads       INT : intra threads (default 1)
     -max_batch_size      INT : max batch size (default 60)
     -beam_size           INT : beam size (default 5)
     -length_penalty      INT : length penalty (default 0.6)
     -min_decoding_length INT : min decoding length (default 0)
-    -device              STR : device to translate [cpu, cuda, auto] (default cpu)
-    -log_level           STR : logging level [debug, info, warning, critical, error] (default debug)
+    -device           STRING : device to translate [cpu, cuda, auto] (default cpu)
+    -log_level        STRING : logging level [debug, info, warning, critical, error] (default debug)
     -log_file           FILE : logging file (default stderr)
     -h                       : this help
 
@@ -199,14 +199,9 @@ if __name__ == "__main__":
             b += 1
             logging.info('(translated batch {} with {} examples)'.format(b,len(batch)))
             for line in batch:
-                #print('MySRC[{}]: {}'.format(n,' '.join(source[n])))
-                #if prefix[n] is not None:
-                    #print('MyPRF[{}]: {}'.format(n,' '.join(prefix[n])))
-                #print('MyOUT[{}]: {}'.format(n,' '.join(line[0]['tokens'])))
                 if len(line):
                     hyp = " ".join(line[0]["tokens"])
-                    #hyp = hyp.split(' '+args.tok_prefix+' ')[-1]
-                    hyp = hyp.split(' '+args.tok_prefix+' ')[-1]
+                    hyp = hyp.split(' '+args.tok_prefix+' ')[-1] #keep whatever appears after the last tok_prefix (or everything if it does not appear)
                 else:
                     hyp = ""
                 print(hyp)
