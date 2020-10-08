@@ -64,6 +64,7 @@ class Args():
         self.beam_size = 5
         self.length_penalty = 0.6
         self.min_decoding_length = 0
+        self.max_decoding_length = 250
 
         log_file = None
         log_level = 'debug'
@@ -74,13 +75,14 @@ class Args():
     -p  FILE : prefix file (prefix lines must be ended by tok_prefix)
     -sp FILE : source and prefix file (lines include source and prefix separateds by tab)
 
-    -tok_prefix       STRING : token used to mark end of prefix (default ‖)
+    -tok_prefix       STRING : token used to mark end of prefix (default ⸨cur⸩)
     -inter_threads       INT : inter threads (default 16)
     -intra_threads       INT : intra threads (default 1)
     -max_batch_size      INT : max batch size (default 60)
     -beam_size           INT : beam size (default 5)
     -length_penalty      INT : length penalty (default 0.6)
     -min_decoding_length INT : min decoding length (default 0)
+    -max_decoding_length INT : max decoding length (default 250)
     -device           STRING : device to translate [cpu, cuda, auto] (default cpu)
     -log_level        STRING : logging level [debug, info, warning, critical, error] (default debug)
     -log_file           FILE : logging file (default stderr)
@@ -118,6 +120,8 @@ ATTENTION: Convert (export) model previous to translate. Use:
                 self.length_penalty = float(argv.pop(0))
             elif tok=="-min_decoding_length" and len(argv):
                 self.min_decoding_length = int(argv.pop(0))
+            elif tok=="-max_decoding_length" and len(argv):
+                self.max_decoding_length = int(argv.pop(0))
             elif tok=="-device" and len(argv):
                 self.device = argv.pop(0)
             elif tok=="-log_file" and len(argv):
@@ -146,6 +150,7 @@ ATTENTION: Convert (export) model previous to translate. Use:
         logging.debug('beam_size={}'.format(self.beam_size))
         logging.debug('length_penalty={}'.format(self.length_penalty))
         logging.debug('min_decoding_length={}'.format(self.min_decoding_length))
+        logging.debug('max_decoding_length={}'.format(self.max_decoding_length))
         logging.debug('device={}'.format(self.device))
         logging.debug('model={}'.format(self.fmodel))
         logging.debug('source={}'.format(self.fsource))
@@ -184,7 +189,7 @@ if __name__ == "__main__":
     logging.info('Built translator')
 
     def translate(translator, src, pref, args):
-        return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, min_decoding_length=args.min_decoding_length)
+        return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, min_decoding_length=args.min_decoding_length, max_decoding_length=args.max_decoding_length)
     
     batch_size = len(source) // args.inter_threads
     logging.info('Start batch_size={}'.format(batch_size))
