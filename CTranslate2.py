@@ -206,10 +206,10 @@ if __name__ == "__main__":
         b = 0
         n = 0
         for future in future_to_trans:
-            batch = future.result()
+            translation_result = future.result()
             b += 1
-            logging.info('(translated batch {} with {} examples)'.format(b,len(batch)))
-            for line in batch:
+            logging.info('(translated batch {} with {} examples)'.format(b,len(translation_result)))
+            for line in translation_result:
                 if len(line):
                     hyp = " ".join(line[0]["tokens"])
                     hyp = hyp.split(' '+args.tok_prefix+' ')[-1] #keep whatever appears after the last tok_prefix (or everything if it does not appear)
