@@ -62,9 +62,10 @@ class Args():
         self.intra_threads = 1
         self.max_batch_size = 60
         self.beam_size = 5
-        self.length_penalty = 0.6
+        self.length_penalty = 0.0
+        self.coverage_penalty = 0.0
         self.min_decoding_length = 0
-        self.max_decoding_length = 250
+        self.max_decoding_length = 300
 
         log_file = None
         log_level = 'debug'
@@ -73,19 +74,21 @@ class Args():
     -m  PATH : model path
     -s  FILE : source file
     -p  FILE : prefix file (prefix lines must be ended by tok_prefix)
-    -sp FILE : source and prefix file (lines include source and prefix separateds by tab)
+    -sp FILE : source and prefix file (lines include source and prefix separated by tab)
 
-    -tok_prefix       STRING : token used to mark end of prefix (default ⸨cur⸩)
-    -inter_threads       INT : inter threads (default 16)
-    -intra_threads       INT : intra threads (default 1)
-    -max_batch_size      INT : max batch size (default 60)
-    -beam_size           INT : beam size (default 5)
-    -length_penalty      INT : length penalty (default 0.6)
-    -min_decoding_length INT : min decoding length (default 0)
-    -max_decoding_length INT : max decoding length (default 250)
-    -device           STRING : device to translate [cpu, cuda, auto] (default cpu)
-    -log_level        STRING : logging level [debug, info, warning, critical, error] (default debug)
-    -log_file           FILE : logging file (default stderr)
+    -tok_prefix       STRING : token used to mark end of prefix                    (⸨cur⸩)
+    -inter_threads       INT : Maximum number of parallel translations, CPU only   (16)
+    -intra_threads       INT : Threads to use per translation, CPU only            (1)
+    -max_batch_size      INT : Maximum batch size to run the model on              (60)
+    -beam_size           INT : Beam size                                           (5)
+    -length_penalty      INT : Length penalty constant to use during beam search   (0.0)
+    -coverage_penalty    INT : Coverage penalty constant to use during beam search (0.0)
+    -min_decoding_length INT : Minimum prediction length                           (0)
+    -max_decoding_length INT : Maximum prediction length                           (300)
+    -device           STRING : device to use [cpu, cuda, auto]                     (cpu)
+
+    -log_level        STRING : log level [debug, info, warning, critical, error]   (debug)
+    -log_file           FILE : log file                                            (stderr)
     -h                       : this help
 
 ATTENTION: Convert (export) model previous to translate. Use:
@@ -118,6 +121,8 @@ ATTENTION: Convert (export) model previous to translate. Use:
                 self.beam_size = int(argv.pop(0))
             elif tok=="-length_penalty" and len(argv):
                 self.length_penalty = float(argv.pop(0))
+            elif tok=="-coverage_penalty" and len(argv):
+                self.coverage_penalty = float(argv.pop(0))
             elif tok=="-min_decoding_length" and len(argv):
                 self.min_decoding_length = int(argv.pop(0))
             elif tok=="-max_decoding_length" and len(argv):
@@ -149,6 +154,7 @@ ATTENTION: Convert (export) model previous to translate. Use:
         logging.debug('max_batch_size={}'.format(self.max_batch_size))
         logging.debug('beam_size={}'.format(self.beam_size))
         logging.debug('length_penalty={}'.format(self.length_penalty))
+        logging.debug('coverage_penalty={}'.format(self.coverage_penalty))
         logging.debug('min_decoding_length={}'.format(self.min_decoding_length))
         logging.debug('max_decoding_length={}'.format(self.max_decoding_length))
         logging.debug('device={}'.format(self.device))
@@ -189,7 +195,7 @@ if __name__ == "__main__":
     logging.info('Built translator')
 
     def translate(translator, src, pref, args):
-        return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, min_decoding_length=args.min_decoding_length, max_decoding_length=args.max_decoding_length)
+        return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, coverage_penalty=args.coverage_penalty, min_decoding_length=args.min_decoding_length, max_decoding_length=args.max_decoding_length)
     
     batch_size = len(source) // args.inter_threads
     logging.info('Start batch_size={}'.format(batch_size))
