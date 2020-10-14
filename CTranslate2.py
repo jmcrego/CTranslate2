@@ -212,7 +212,7 @@ if __name__ == "__main__":
             for line in translation_result:
                 if len(line):
                     hyp = " ".join(line[0]["tokens"])
-                    hyp = hyp.split(' '+args.tok_prefix+' ')[-1] #keep whatever appears after the last tok_prefix (or everything if it does not appear)
+                    hyp = hyp.split(args.tok_prefix+' ')[-1] #keep whatever appears after the last tok_prefix (or everything if it does not appear)
                 else:
                     hyp = ""
                 print(hyp)
