@@ -66,6 +66,7 @@ class Args():
         self.coverage_penalty = 0.0
         self.min_decoding_length = 0
         self.max_decoding_length = 300
+        self.num_hypotheses = 1
 
         log_file = None
         log_level = 'debug'
@@ -85,6 +86,7 @@ class Args():
     -coverage_penalty    INT : Coverage penalty constant to use during beam search (0.0)
     -min_decoding_length INT : Minimum prediction length                           (0)
     -max_decoding_length INT : Maximum prediction length                           (300)
+    -num_hypotheses      INT : n-best hypotheses size                              (1)
     -device           STRING : device to use [cpu, cuda, auto]                     (cpu)
 
     -log_level        STRING : log level [debug, info, warning, critical, error]   (debug)
@@ -127,6 +129,8 @@ ATTENTION: Convert (export) model previous to translate. Use:
                 self.min_decoding_length = int(argv.pop(0))
             elif tok=="-max_decoding_length" and len(argv):
                 self.max_decoding_length = int(argv.pop(0))
+            elif tok=="-num_hypotheses" and len(argv):
+                self.num_hypotheses = int(argv.pop(0))
             elif tok=="-device" and len(argv):
                 self.device = argv.pop(0)
             elif tok=="-log_file" and len(argv):
@@ -148,6 +152,9 @@ ATTENTION: Convert (export) model previous to translate. Use:
             logging.error('error: missing one of -s or -sp options')
             sys.exit()
 
+        if self.num_hypotheses > 1:
+            self.beam_size = max(self.beam_size,self.num_hypotheses)
+
         logging.debug('tok_prefix={}'.format(self.tok_prefix))
         logging.debug('inter_threads={}'.format(self.inter_threads))
         logging.debug('intra_threads={}'.format(self.intra_threads))
@@ -157,6 +164,7 @@ ATTENTION: Convert (export) model previous to translate. Use:
         logging.debug('coverage_penalty={}'.format(self.coverage_penalty))
         logging.debug('min_decoding_length={}'.format(self.min_decoding_length))
         logging.debug('max_decoding_length={}'.format(self.max_decoding_length))
+        logging.debug('num_hypotheses={}'.format(self.num_hypotheses))
         logging.debug('device={}'.format(self.device))
         logging.debug('model={}'.format(self.fmodel))
         logging.debug('source={}'.format(self.fsource))
@@ -195,7 +203,7 @@ if __name__ == "__main__":
     logging.info('Built translator')
 
     def translate(translator, src, pref, args):
-        return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, coverage_penalty=args.coverage_penalty, min_decoding_length=args.min_decoding_length, max_decoding_length=args.max_decoding_length)
+        return translator.translate_batch(source=src, target_prefix=pref, max_batch_size=args.max_batch_size, beam_size=args.beam_size, length_penalty=args.length_penalty, coverage_penalty=args.coverage_penalty, min_decoding_length=args.min_decoding_length, max_decoding_length=args.max_decoding_length, num_hypotheses=args.num_hypotheses)
     
     batch_size = len(source) // args.inter_threads
     logging.info('Start batch_size={}'.format(batch_size))
